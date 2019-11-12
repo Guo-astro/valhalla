@@ -922,7 +922,7 @@ std::vector<std::vector<PathInfo>> BidirectionalAStar::FormPath(GraphReader& gra
        edgelabel_index = edgelabels_forward_[edgelabel_index].predecessor()) {
     const BDEdgeLabel& edgelabel = edgelabels_forward_[edgelabel_index];
     path.emplace_back(edgelabel.mode(), edgelabel.cost().secs, edgelabel.edgeid(), 0,
-                      edgelabel.cost().cost);
+                      edgelabel.cost().cost, edgelabel.has_time_restriction());
 
     // Check if this is a ferry
     if (edgelabel.use() == Use::kFerry) {
@@ -975,7 +975,7 @@ std::vector<std::vector<PathInfo>> BidirectionalAStar::FormPath(GraphReader& gra
       cost += edgelabel.cost() - edgelabels_reverse_[predidx].cost();
     }
     cost += tc;
-    path.emplace_back(edgelabel.mode(), cost.secs, edgelabel.opp_edgeid(), 0, cost.cost);
+    path.emplace_back(edgelabel.mode(), cost.secs, edgelabel.opp_edgeid(), 0, cost.cost, edgelabel.has_time_restriction());
 
     // Check if this is a ferry
     if (edgelabel.use() == Use::kFerry) {

@@ -515,7 +515,7 @@ std::vector<PathInfo> AStarPathAlgorithm::FormPath(const uint32_t dest) {
        edgelabel_index = edgelabels_[edgelabel_index].predecessor()) {
     const EdgeLabel& edgelabel = edgelabels_[edgelabel_index];
     path.emplace_back(edgelabel.mode(), edgelabel.cost().secs, edgelabel.edgeid(), 0,
-                      edgelabel.cost().cost);
+                      edgelabel.cost().cost, edgelabel.has_time_restriction());
 
     // Check if this is a ferry
     if (edgelabel.use() == Use::kFerry) {

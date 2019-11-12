@@ -231,7 +231,13 @@ public:
     origin_ = true;
   }
   /**
-   * Sets this edge as an origin.
+    * Does this edge have any time restrictions?
+   */
+  bool has_time_restriction() const {
+    return has_time_restrictions_;
+  }
+  /**
+   * Sets whether this edge has any time restrictions or not
    */
   void set_has_time_restriction(bool has_time_restrictions) {
     has_time_restrictions_ = has_time_restrictions;

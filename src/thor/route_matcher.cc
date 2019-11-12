@@ -178,7 +178,7 @@ bool expand_from_node(const std::shared_ptr<DynamicCost>* mode_costing,
           elapsed.secs = shape[index].epoch_time() - shape[0].epoch_time();
 
         // Add edge and update correlated index
-        path_infos.emplace_back(mode, elapsed.secs, edge_id, 0, elapsed.cost);
+        path_infos.emplace_back(mode, elapsed.secs, edge_id, 0, elapsed.cost, false);
 
         // Set previous edge label
         prev_edge_label = {kInvalidLabel, edge_id, de, {}, 0, 0, mode, 0};
@@ -306,7 +306,7 @@ bool RouteMatcher::FormPath(const std::shared_ptr<DynamicCost>* mode_costing,
           elapsed.secs = shape[index].epoch_time() - shape[0].epoch_time();
 
         // Add begin edge
-        path_infos.emplace_back(mode, elapsed.secs, graphid, 0, elapsed.cost);
+        path_infos.emplace_back(mode, elapsed.secs, graphid, 0, elapsed.cost, false);
 
         // Set previous edge label
         prev_edge_label = {kInvalidLabel, graphid, de, {}, 0, 0, mode, 0};
@@ -347,7 +347,7 @@ bool RouteMatcher::FormPath(const std::shared_ptr<DynamicCost>* mode_costing,
             elapsed.secs = shape.back().epoch_time() - shape[0].epoch_time();
 
           // Add end edge
-          path_infos.emplace_back(mode, elapsed.secs, end_edge_graphid, 0, elapsed.cost);
+          path_infos.emplace_back(mode, elapsed.secs, end_edge_graphid, 0, elapsed.cost, false);
           return true;
         } else {
           // Did not find an edge that correlates with the trace, return false.
@@ -368,7 +368,7 @@ bool RouteMatcher::FormPath(const std::shared_ptr<DynamicCost>* mode_costing,
           elapsed.secs = shape.back().epoch_time() - shape[0].epoch_time();
 
         // Add end edge
-        path_infos.emplace_back(mode, elapsed.secs, GraphId(edge.graph_id()), 0, elapsed.cost);
+        path_infos.emplace_back(mode, elapsed.secs, GraphId(edge.graph_id()), 0, elapsed.cost, false);
         return true;
       }
     }

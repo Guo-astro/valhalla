@@ -541,7 +541,8 @@ TripLeg_Edge* AddTripEdge(const AttributesController& controller,
                           TripLeg_Node* trip_node,
                           const GraphTile* graphtile,
                           const uint32_t second_of_week,
-                          const float length_percentage) {
+                          const float length_percentage,
+                          const bool has_time_restriction) {
 
   // Index of the directed edge within the tile
   uint32_t idx = edge.id();
@@ -680,6 +681,10 @@ TripLeg_Edge* AddTripEdge(const AttributesController& controller,
         trip_edge->set_traversability(TripLeg_Traversability::TripLeg_Traversability_kNone);
       }
     }
+  }
+
+  if (has_time_restriction) {
+    trip_edge->set_has_time_restriction(has_time_restriction);
   }
 
   // Set the trip path use based on directed edge use if requested
@@ -1180,7 +1185,8 @@ TripLegBuilder::Build(const AttributesController& controller,
         AddTripEdge(controller, path_begin->edgeid, path_begin->trip_id, 0, path_begin->mode,
                     travel_types[static_cast<int>(path_begin->mode)],
                     mode_costing[static_cast<uint32_t>(path_begin->mode)], edge, drive_on_right,
-                    trip_path.add_node(), tile, origin_second_of_week, std::abs(end_pct - start_pct));
+                    trip_path.add_node(), tile, origin_second_of_week, std::abs(end_pct - start_pct),
+                    path_begin->has_time_restriction);
 
     // Set begin shape index if requested
     if (controller.attributes.at(kEdgeBeginShapeIndex)) {
@@ -1497,7 +1503,7 @@ TripLegBuilder::Build(const AttributesController& controller,
     float length_pct = (is_first_edge ? 1.f - start_pct : (is_last_edge ? end_pct : 1.f));
     TripLeg_Edge* trip_edge =
         AddTripEdge(controller, edge, trip_id, block_id, mode, travel_type, costing, directededge,
-                    node->drive_on_right(), trip_node, graphtile, second_of_week, length_pct);
+                    node->drive_on_right(), trip_node, graphtile, second_of_week, length_pct, edge_itr->has_time_restriction);
 
     // Get the shape and set shape indexes (directed edge forward flag
     // determines whether shape is traversed forward or reverse).
@@ -1564,11 +1570,13 @@ TripLegBuilder::Build(const AttributesController& controller,
       float total = static_cast<float>(directededge->length());
       // Note: that this cannot be both the first and last edge, that special case is handled above
       // Trim the shape at the front for the first edge
-      if (is_first_edge)
+      if (is_first_edge) {
         TrimShape(edge_shape, start_pct * total, start_vrt, total, edge_shape.back());
+      }
       // And at the back if its the last edge
-      else
+      else {
         TrimShape(edge_shape, 0, edge_shape.front(), end_pct * total, end_vrt);
+      }
       // Keep the shape
       trip_shape.insert(trip_shape.end(), edge_shape.begin() + is_last_edge, edge_shape.end());
     } // Just get the shape in there in the right direction no clipping needed

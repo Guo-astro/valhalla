@@ -538,7 +538,7 @@ std::vector<PathInfo> TimeDepReverse::FormPath(GraphReader& graphreader, const u
       cost += edgelabel.cost() - edgelabels_rev_[predidx].cost();
     }
     cost += tc;
-    path.emplace_back(edgelabel.mode(), cost.secs, edgelabel.opp_edgeid(), 0, cost.cost);
+    path.emplace_back(edgelabel.mode(), cost.secs, edgelabel.opp_edgeid(), 0, cost.cost, edgelabel.has_time_restriction());
 
     // Check if this is a ferry
     if (edgelabel.use() == Use::kFerry) {

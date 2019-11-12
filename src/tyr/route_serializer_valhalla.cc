@@ -97,6 +97,7 @@ json::MapPtr summary(const google::protobuf::RepeatedPtrField<valhalla::Directio
 
   uint64_t time = 0;
   long double length = 0;
+  bool is_time_restricted = false;
   AABB2<PointLL> bbox(10000.0f, 10000.0f, -10000.0f, -10000.0f);
   for (const auto& leg : legs) {
     time += static_cast<uint64_t>(leg.summary().time());
@@ -105,6 +106,7 @@ json::MapPtr summary(const google::protobuf::RepeatedPtrField<valhalla::Directio
     AABB2<PointLL> leg_bbox(leg.summary().bbox().min_ll().lng(), leg.summary().bbox().min_ll().lat(),
                             leg.summary().bbox().max_ll().lng(), leg.summary().bbox().max_ll().lat());
     bbox.Expand(leg_bbox);
+    is_time_restricted = is_time_restricted || leg.summary().is_time_restricted();
   }
 
   auto route_summary = json::map({});
@@ -115,6 +117,7 @@ json::MapPtr summary(const google::protobuf::RepeatedPtrField<valhalla::Directio
   route_summary->emplace("max_lat", json::fp_t{bbox.maxy(), 6});
   route_summary->emplace("max_lon", json::fp_t{bbox.maxx(), 6});
   LOG_DEBUG("trip_time::" + std::to_string(time) + "s");
+  route_summary->emplace("is_time_restricted", json::Value{is_time_restricted});
   return route_summary;
 }
 
@@ -307,6 +310,10 @@ legs(const google::protobuf::RepeatedPtrField<valhalla::DirectionsLeg>& directio
       if (maneuver.portions_unpaved()) {
         man->emplace("rough", maneuver.portions_unpaved());
       }
+      if (maneuver.has_time_restriction()) {
+        man->emplace("has_time_restriction", maneuver.has_time_restriction());
+      }
+
 
       // Process sign
       if (maneuver.has_sign()) {
