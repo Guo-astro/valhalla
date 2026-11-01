@@ -1,6 +1,7 @@
 ## UNRELEASED
 * **Removed**
 * **Enhancement**
+   * UPDATED: timezone database to 2026f [#4](https://github.com/Guo-astro/valhalla/pull/4)
    * CHANGED: replace `memset` with C++20 default member initializers for bitfields in `DirectedEdge`, `NodeInfo`, and `GraphTileHeader`; drop empty default constructors where possible [#6128](https://github.com/valhalla/valhalla/issues/6128)
 * **Bug Fix**
    * FIXED: Fix flatbush find_path [#6385](https://github.com/valhalla/valhalla/pull/6385)
